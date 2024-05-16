@@ -1,5 +1,7 @@
 use std::env::args;
-use std::fs;
+use std::io::BufRead;
+use std::io::BufReader;
+use std::fs::File;
 
 
 fn main() {
@@ -14,13 +16,16 @@ fn main() {
     
     println!("filename: {:?}, path: {:?}", args.search, args.path);
 
-    let content = fs::read_to_string(&args.path).expect("could not read file");
+    let file = File::open(&args.path).expect("could not open file");
+    let reader = BufReader::new(file);
+    
 
-    for line in content.lines(){
-        if line.contains(&args.search){
+    for line in reader.lines() {
+        // Check if the line contains the search term
+        let line = line.expect("could not read line");
+        if line.contains(&args.search) {
             println!("{}", line);
         }
-    
     }
 
 
